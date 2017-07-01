@@ -7,11 +7,6 @@ __gcloud() {
     "$HOME/opt/google-cloud-sdk"
   )
 
-  local GCLOUD_INCLUDES=(
-    'completion' \
-    'path'
-  )
-
   # Attempt to locate Google Cloud SDK in the command path
   find_in_path() {
     command -v gcloud >/dev/null 2>&1 || return -1
@@ -36,18 +31,12 @@ __gcloud() {
       || >&2 echo "Failed to locate gcloud sdk root. Please set GOOGLE_CLOUD_SDK_HOME in your .zshrc"
   }
 
-  # Load Google Cloud SDK includes from given install dir
-  source_includes() {
-    if [ ! -z "$1" ]; then
-      for include in ${GCLOUD_INCLUDES}; do
-        source "$1/$include.zsh.inc"
-      done
-    fi
-  }
-
   export CLOUDSDK_ROOT_DIR=${CLOUDSDK_ROOT_DIR:-$(_find_gcloud)}
 
-  source_includes ${CLOUDSDK_ROOT_DIR}
+  if [ ! -z "$CLOUDSDK_ROOT_DIR" ]; then
+    source "$CLOUDSDK_ROOT_DIR/completion.zsh.inc"
+    source "$CLOUDSDK_ROOT_DIR/path.zsh.inc"
+  fi
 }
 
 __gcloud
